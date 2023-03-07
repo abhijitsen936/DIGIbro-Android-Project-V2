@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "672334952253",
+    "project_id": "dgbro-4f65f",
+    "storage_bucket": "dgbro-4f65f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672334952253:android:5db32543b4cc945d50f754",
+        "android_client_info": {
+          "package_name": "com.example.dgbro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672334952253-l3ivds0eqlg0g88j87metp47lluvdnhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVJENOg1b0EQcCQF0iKNIRXZOoBsMc4h4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672334952253-l3ivds0eqlg0g88j87metp47lluvdnhp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672334952253:android:2dc0188838dd069950f754",
+        "android_client_info": {
+          "package_name": "com.example.digibro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672334952253-l3ivds0eqlg0g88j87metp47lluvdnhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVJENOg1b0EQcCQF0iKNIRXZOoBsMc4h4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672334952253-l3ivds0eqlg0g88j87metp47lluvdnhp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
