@@ -42,6 +42,7 @@ import java.util.UUID;
 public class Login extends AppCompatActivity {
     private Uri mImageUri;
     private Uri mFileUri;
+    String k;
     private static final int FILE_REQUEST_ID = 2;
     private final int IMG_REQUEST_ID = 1;
 
@@ -99,11 +100,14 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                upload();
 
                 final ProgressDialog p = new ProgressDialog(Login.this);
                 p.setTitle("Uploading");
                 p.show();
+                upload();
+
+
+
 
                 if (mImageUri != null) {
 
@@ -111,11 +115,23 @@ public class Login extends AppCompatActivity {
                     reference.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            p.dismiss();
+
+                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    k = uri.toString();
+                                }
+                            });
+
 
                             Toast.makeText(Login.this, "Saved", Toast.LENGTH_SHORT).show();
 
+                            p.dismiss();
+
                         }
+
+
+
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -125,6 +141,8 @@ public class Login extends AppCompatActivity {
 
 
                 }
+
+
 
 
             }
@@ -233,6 +251,9 @@ public void uploadFile() {
 
 
     private void upload() {
+
+
+
         if (mFileUri != null) {
             StorageReference fileReference = mStorageRef.child("files/" + UUID.randomUUID().toString()
                     + getFileExtension(mFileUri));
@@ -257,7 +278,40 @@ public void uploadFile() {
                                     String documentPath = findDocumentPathByEmail(userId, db, collectionName);
 
 
+
+
+
+
+
+//                                    if (mImageUri != null) {
 //
+//                                        StorageReference reference = mStorageRef.child("picture/" + UUID.randomUUID().toString()+ getFileExtension(mFileUri));
+//                                        reference.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                                                reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                                    @Override
+//                                                    public void onSuccess(Uri uri) {
+//                                                        k = uri.toString();
+//                                                    }
+//                                                });
+//
+//
+//                                                Toast.makeText(Login.this, "Saved", Toast.LENGTH_SHORT).show();
+//
+//                                            }
+//                                        }).addOnFailureListener(new OnFailureListener() {
+//                                            @Override
+//                                            public void onFailure(@NonNull Exception e) {
+//                                                Toast.makeText(Login.this, "ERROR", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        });
+//
+//
+//                                    }
+
+
 
 
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -268,13 +322,15 @@ public void uploadFile() {
                                     data.put("Full Name", name);
                                     data.put("age", age);
                                     data.put("resume link", downloadUrl);
-                                    data.put("Profile picture Link", mImageUri.toString());
+                                    data.put("Profile picture Link", k);
 
                                     docRef.set(data, SetOptions.merge())
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+
                                                     Toast.makeText(Login.this, "Candidate profile created successfully", Toast.LENGTH_SHORT).show();
+                                                    startActivity(new Intent(Login.this, CandidateDetails.class));
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {

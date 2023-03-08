@@ -12,6 +12,9 @@
         android:theme="@style/Theme.DIGIbro"
         tools:targetApi="31">
         <activity
+            android:name=".CandidateDetails"
+            android:exported="false" />
+        <activity
             android:name=".CandidateList"
             android:exported="false" />
         <activity

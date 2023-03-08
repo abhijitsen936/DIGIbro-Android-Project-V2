@@ -76,15 +76,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                    k[0] = value.getString("domain");
 
-                                   if(k[0].equals("Candidate")){
-
-                                       Toast.makeText(MainActivity.this, "You are already Registered", Toast.LENGTH_SHORT).show();
-
-
+//                                   if(k[0].equals("Candidate")){
+//
+//                                       Toast.makeText(MainActivity.this, "You are already Registered", Toast.LENGTH_SHORT).show();
+//
+//
 //                                       startActivity(new Intent(MainActivity.this, CandidateDetails.class));
-                                   } else if (k[0].equals("Recruiter")) {
+//                                   }
+
+                                    if (k[0].equals("Recruiter")) {
                                        startActivity(new Intent(MainActivity.this, CandidateList.class));
-                                   }
+                                   }else {
+                                        startActivity(new Intent(MainActivity.this, Login.class));
+                                    }
 
 
                                 }
