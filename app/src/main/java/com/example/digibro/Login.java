@@ -1,14 +1,13 @@
 package com.example.digibro;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
+
 import android.net.Uri;
         import android.os.Bundle;
-import android.provider.OpenableColumns;
+
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -219,7 +218,7 @@ public void uploadFile() {
         if (query.isSuccessful()) {
             for (QueryDocumentSnapshot document : query.getResult()) {
                 String documentId = document.getId();
-//                String documentPath = collectionName + "/" + documentId;
+
                 return documentId;
             }
         }
@@ -283,39 +282,12 @@ public void uploadFile() {
 
 
 
-//                                    if (mImageUri != null) {
-//
-//                                        StorageReference reference = mStorageRef.child("picture/" + UUID.randomUUID().toString()+ getFileExtension(mFileUri));
-//                                        reference.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                            @Override
-//                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                                                reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                                    @Override
-//                                                    public void onSuccess(Uri uri) {
-//                                                        k = uri.toString();
-//                                                    }
-//                                                });
-//
-//
-//                                                Toast.makeText(Login.this, "Saved", Toast.LENGTH_SHORT).show();
-//
-//                                            }
-//                                        }).addOnFailureListener(new OnFailureListener() {
-//                                            @Override
-//                                            public void onFailure(@NonNull Exception e) {
-//                                                Toast.makeText(Login.this, "ERROR", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        });
-//
-//
-//                                    }
 
 
 
 
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
+
                                     DocumentReference docRef = db.collection("Vendor").document(documentPath);
 
                                     Map<String, Object> data = new HashMap<>();
