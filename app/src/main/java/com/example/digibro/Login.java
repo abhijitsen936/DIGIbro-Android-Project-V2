@@ -41,7 +41,7 @@ import java.util.UUID;
 public class Login extends AppCompatActivity {
     private Uri mImageUri;
     private Uri mFileUri;
-    String k;
+    String k, dl;
     private static final int FILE_REQUEST_ID = 2;
     private final int IMG_REQUEST_ID = 1;
 
@@ -61,8 +61,14 @@ public class Login extends AppCompatActivity {
     private StorageReference mStorageRef;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
+    UserRepository userRepository = UserRepository.getInstance();
+    String userEmail = userRepository.getUserEmail();
 
 
+    String collectionName = "Vendor";
+    String userId = userEmail;
+    String documentPath = findDocumentPathByEmail(userId, db, collectionName);
+    DocumentReference docRef = db.collection("Vendor").document(documentPath);
 
     public Login() {
     }
@@ -84,12 +90,46 @@ public class Login extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        final ProgressDialog p = new ProgressDialog(Login.this);
+        p.setTitle("Uploading");
+
+
+
+
 
         IMGbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openPicChooser();
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "select picture"), IMG_REQUEST_ID);
+
+
+
             }
+        });
+
+
+
+
+
+        UploadResume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.setType("application/pdf");
+                startActivityForResult(i, FILE_REQUEST_ID);
+
+
+
+
+
+
+
+
+
+                                        }
         });
 
 
@@ -98,14 +138,6 @@ public class Login extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                final ProgressDialog p = new ProgressDialog(Login.this);
-                p.setTitle("Uploading");
-                p.show();
-                upload();
-
-
 
 
                 if (mImageUri != null) {
@@ -119,13 +151,33 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     k = uri.toString();
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("Profile picture Link", k);
+
+                                    docRef.update(data)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                    Toast.makeText(Login.this, "Picture Uploading Successful", Toast.LENGTH_SHORT).show();
+                                                    startActivity(new Intent(Login.this, CandidateDetails.class));
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                    Toast.makeText(Login.this, "Picture Uploading Failed", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
                                 }
                             });
 
 
-                            Toast.makeText(Login.this, "Saved", Toast.LENGTH_SHORT).show();
 
-                            p.dismiss();
+
 
                         }
 
@@ -142,37 +194,131 @@ public class Login extends AppCompatActivity {
                 }
 
 
+                if (mFileUri != null) {
+                    StorageReference fileReference = mStorageRef.child("files/" + UUID.randomUUID().toString()
+                    );
+                    fileReference.putFile(mFileUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            dl = uri.toString();
+
+                                            Map<String, Object> cv = new HashMap<>();
+                                            cv.put("resume link", dl);
+
+
+                                            docRef.update(cv)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+                                                            Toast.makeText(Login.this, "CV Uploading Successful", Toast.LENGTH_SHORT).show();
+
+
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+
+                                                            Toast.makeText(Login.this, "CV Uploading Failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+
+                                        }
+                                    });
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Login.this, "ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+                String name = InputCName.getText().toString();
+                String age = InputCAge.getText().toString();
+
+                UserRepository userRepository = UserRepository.getInstance();
+                String userEmail = userRepository.getUserEmail();
+
+
+                String collectionName = "Vendor";
+                String userId = userEmail;
+
+                String documentPath = findDocumentPathByEmail(userId, db, collectionName);
+
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                DocumentReference docRef = db.collection("Vendor").document(documentPath);
+
+                Map<String, Object> data = new HashMap<>();
+                data.put("Full Name", name);
+                data.put("age", age);
+                data.put("resume link", dl);
+                data.put("Profile picture Link", k);
+
+                docRef.set(data, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                Toast.makeText(Login.this, "Candidate profile created successfully", Toast.LENGTH_SHORT).show();
+
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(Login.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
 
 
             }
         });
 
 
-        UploadResume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadFile();
-            }
-        });
-    }
-//  button Upload resume, function calling.......
-public void uploadFile() {
-    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-    i.setType("application/pdf");
-    startActivityForResult(i, FILE_REQUEST_ID);
-}
 
 
 
-    // IMG button click, and function call
-    private void openPicChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "select picture"), IMG_REQUEST_ID);
+
+
+
+
+
 
 
     }
+
+
+
+
+
+
+
 
 
     // to add the picture on the image view ............
@@ -196,11 +342,6 @@ public void uploadFile() {
 
 
 
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
 
 
 
@@ -228,97 +369,4 @@ public void uploadFile() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void upload() {
-
-
-
-        if (mFileUri != null) {
-            StorageReference fileReference = mStorageRef.child("files/" + UUID.randomUUID().toString()
-                    + getFileExtension(mFileUri));
-            fileReference.putFile(mFileUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                             fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    String downloadUrl = uri.toString();
-                                    String name = InputCName.getText().toString();
-                                    String age = InputCAge.getText().toString();
-
-                                    UserRepository userRepository = UserRepository.getInstance();
-                                    String userEmail = userRepository.getUserEmail();
-
-
-                                    String collectionName = "Vendor";
-                                    String userId = userEmail;
-
-                                    String documentPath = findDocumentPathByEmail(userId, db, collectionName);
-
-
-
-
-
-
-
-
-
-
-
-                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                                    DocumentReference docRef = db.collection("Vendor").document(documentPath);
-
-                                    Map<String, Object> data = new HashMap<>();
-                                    data.put("Full Name", name);
-                                    data.put("age", age);
-                                    data.put("resume link", downloadUrl);
-                                    data.put("Profile picture Link", k);
-
-                                    docRef.set(data, SetOptions.merge())
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-
-                                                    Toast.makeText(Login.this, "Candidate profile created successfully", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(Login.this, CandidateDetails.class));
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(Login.this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
-
-                                }
-                            });
-                        }
-                    });
-        }
-
-
-    }
 }
