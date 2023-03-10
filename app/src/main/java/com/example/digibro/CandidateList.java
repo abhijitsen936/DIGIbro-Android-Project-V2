@@ -54,8 +54,8 @@ public class CandidateList extends AppCompatActivity {
                         final QuerySnapshot valueFinal = value;
                         namelist.clear();
                         for(DocumentSnapshot s: valueFinal){
-                            namelist.add(s.getString("Full Name") + ":"+ "  " + s.getString("name")
-                                    +"   " +"age-" + s.getString("age") );
+                            namelist.add("Name-" + " " + s.getString("Full Name") + "\n"+"Email-" + "  " + s.getString("name")
+                                    +"     " +"age-" + s.getString("age") );
 
                         }
                         ArrayAdapter adapter = new ArrayAdapter<>(CandidateList.this,

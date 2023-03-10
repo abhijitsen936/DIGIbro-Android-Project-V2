@@ -65,7 +65,8 @@ public class Signup extends AppCompatActivity {
                 String password2 = Password2.getText().toString();
                 int k = RadioGroupB.getCheckedRadioButtonId();
                 rb = findViewById(k);
-
+                UserRepository userRepository = UserRepository.getInstance();
+                userRepository.setUserEmail(username);
 
 
                 if (username.isEmpty() || password.isEmpty() || password2.isEmpty() || k == -1) {
@@ -116,7 +117,7 @@ public class Signup extends AppCompatActivity {
 
 
 
-                                    startActivity(new Intent(Signup.this, MainActivity.class));
+                                    startActivity(new Intent(Signup.this, Login.class));
                                 } else {
                                     Toast.makeText(Signup.this, "Registration Failed", Toast.LENGTH_SHORT).show();
                                 }
@@ -136,7 +137,7 @@ public class Signup extends AppCompatActivity {
                                     Toast.makeText(Signup.this, "Registration Successful", Toast.LENGTH_SHORT).show();
 
 
-                                    startActivity(new Intent(Signup.this, MainActivity.class));
+                                    startActivity(new Intent(Signup.this, CandidateList.class));
                                 } else {
                                     Toast.makeText(Signup.this, "Registration Failed ", Toast.LENGTH_SHORT).show();
                                 }
