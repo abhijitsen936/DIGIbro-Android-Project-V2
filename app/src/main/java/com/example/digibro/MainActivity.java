@@ -9,9 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -68,27 +70,53 @@ public class MainActivity extends AppCompatActivity {
                                 User u = User.getInstance();
                                 String user = u.getUser();
                                 final String[] k = new String[1];
+                                final String[] v = new String[1];
 
                                 String dcPath = findDocumentPathByEmail(email, db, "All");
+                                String dbPathV= findDocumentPathByEmail(email, db, "Vendor");
 
                             FirebaseFirestore.getInstance().collection("All").document(dcPath).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                   k[0] = value.getString("domain");
+                                    k[0] = value.getString("domain");
 
-//                                   if(k[0].equals("Candidate")){
-//
-//                                       Toast.makeText(MainActivity.this, "You are already Registered", Toast.LENGTH_SHORT).show();
-//
-//
-//                                       startActivity(new Intent(MainActivity.this, CandidateDetails.class));
-//                                   }
+
+                                   if(k[0].equals("Candidate")){
+
+                                     FirebaseFirestore.getInstance().collection("Vendor").document(dbPathV).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                                                                      v[0] = value.getString("Full Name");
+                                                                     if(v[0]!= null){
+                                                               Toast.makeText(MainActivity.this, "You are already Registered", Toast.LENGTH_SHORT).show();
+                                                                startActivity(new Intent(MainActivity.this, CandidateDetails.class));
+return;
+                                                               }else {
+                                                                         startActivity(new Intent(MainActivity.this, Login.class));
+                                                                         return;
+                                                                     }
+
+
+
+
+                                }
+                            });
+
+
+
+
+
+
+                                   }
 
                                     if (k[0].equals("Recruiter")) {
                                        startActivity(new Intent(MainActivity.this, CandidateList.class));
-                                   }else {
-                                        startActivity(new Intent(MainActivity.this, Login.class));
-                                    }
+                                   }
+
+//                                    else {
+//                                        startActivity(new Intent(MainActivity.this, Login.class));
+//                                    }
 
 
                                 }
@@ -143,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
                             }
 
 
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this, "Please SignUp.", Toast.LENGTH_SHORT).show();
+                            }
                         });
             }
         });
